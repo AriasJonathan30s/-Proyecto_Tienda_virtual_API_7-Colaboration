@@ -17,9 +17,9 @@ app=Flask(__name__)
 app.config.from_object(__name__)
 #Configuracion para la macros de datos
 USER_DB='postgres'
-PASS_DB='riki'
+PASS_DB='universidadupem'
 URL_DB='localhost'
-NAME_DB='tienda3b2'
+NAME_DB='STP'
 FULL_URL_DB=f'postgresql://{USER_DB}:{PASS_DB}@{URL_DB}/{NAME_DB}'#CADENA DE CONEXION COMPLETA
 app.config['SQLALCHEMY_DATABASE_URI']=FULL_URL_DB#cual es laconexion de la bd que va utilizar
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
@@ -48,7 +48,7 @@ def Inicio():
 
 @app.route('/Registro', methods=['GET', 'POST'])
 def Registro():
-    total_usuario = models.Usuario.query.count()
+    total_usuario = models.Usuario_cliente.query.count()
     if request.method=='POST':
             if models.Usuario.query.filter_by(correo=request.form['correo']).first() is None:
                 if models.Usuario.query.filter_by(contrasenia=request.form['password']).first() is None:
@@ -58,7 +58,7 @@ def Registro():
                     session['usuarioG']= request.form['usuario']
                     session['passwordG']= request.form['password']
 
-                    email = request.form['correo']
+                    email = request.form['correo_cliente']
                     token = s.dumps(email, salt='email-confirm')
                     msg = Message('Confirmacioin de Correo Electronico', sender='2020sunburst.systems@gmail.com',
                                   recipients=[email])
@@ -104,7 +104,7 @@ def confirm_email(token):
 def Salir():
     if request.method=='POST':
 
-       comentario=models.Evaluacion(usuario_id=session['id'],
+       comentario=models.Evaluacion(usuario_id=session['id_cliente'],
                                     comentario=request.form['comentario'])
        app.logger.info(f'Informacion de salida{request.path}')
        app.logger.info(f'Informacion de salida{comentario}')
